@@ -4,7 +4,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { create } from "domain";
 
 export default async function productRoutes(fastify: FastifyInstance) {
-	//fastify.addHook("onRequest", authenticate);
+	fastify.addHook("onRequest", authenticate);
 	fastify.get(
 		"/",
 		{
