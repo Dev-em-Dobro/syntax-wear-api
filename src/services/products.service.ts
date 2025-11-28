@@ -1,6 +1,5 @@
 import { prisma } from "../utils/prisma";
 import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
-import { sl } from "zod/v4/locales";
 
 export const getProducts = async (filter: ProductFilters) => {
 	const { minPrice, maxPrice, search, sortBy, sortOrder, page = 1, limit = 10 } = filter;
@@ -121,4 +120,19 @@ export const updateProduct = async (id: number, data: UpdateProduct) => {
 	});
 
 	return updatedProduct;
+};
+
+export const deleteProduct = async (id: number) => {
+	const existingProduct = await prisma.product.findUnique({
+		where: { id },
+	});
+
+	if(!existingProduct) {
+		throw new Error("Produto não encontrado");
+	}
+
+	await prisma.product.update({
+		where: { id },
+		data: { active: false },
+	});
 };
