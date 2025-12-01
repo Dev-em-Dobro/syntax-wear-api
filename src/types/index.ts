@@ -63,3 +63,13 @@ export interface UpdateProduct extends Partial<CreateProduct> {
     stock?: number;
     active?: boolean;
 }
+
+// Order types
+export interface OrderFilters {
+    page?: number;
+    limit?: number;
+    status?: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    userId?: number;
+    startDate?: string;
+    endDate?: string;
+}

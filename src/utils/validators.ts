@@ -75,3 +75,13 @@ export const updateProductSchema = z.object({
 export const deleteProductSchema = z.object({
 	id: z.number().int().min(1, "ID inválido"),
 });
+
+// Order validation schemas
+export const orderFiltersSchema = z.object({
+	page: z.coerce.number().int().min(1, "Página deve ser no mínimo 1").optional(),
+	limit: z.coerce.number().int().min(1, "Limite deve ser no mínimo 1").optional(),
+	status: z.enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"]).optional(),
+	userId: z.coerce.number().int().optional(),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+});
