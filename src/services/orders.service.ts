@@ -156,7 +156,7 @@ export async function createOrder(data: CreateOrder) {
         userId: data.userId,
         total: calculatedTotal,
         status: 'PENDING',
-        shippingAddress: data.shippingAddress,
+        shippingAddress: data.shippingAddress as any,
         paymentMethod: data.paymentMethod,
       },
     })
@@ -208,7 +208,7 @@ export async function updateOrder(id: number, data: UpdateOrder) {
     where: { id },
     data: {
       status: data.status,
-      shippingAddress: data.shippingAddress,
+      shippingAddress: data.shippingAddress as any,
     },
     include: {
       user: {
