@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { listCategories, getCategory } from "../controllers/categories.controller";
+import { listCategories, getCategory, createNewCategory } from "../controllers/categories.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function categoryRoutes(fastify: FastifyInstance) {
@@ -133,5 +133,57 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
 			},
 		},
 		getCategory
+	);
+
+	fastify.post(
+		"/",
+		{
+			schema: {
+				tags: ["Categories"],
+				description: "Criar uma nova categoria",
+				security: [{ bearerAuth: [] }],
+				body: {
+					type: "object",
+					required: ["name"],
+					properties: {
+						name: { type: "string", description: "Nome da categoria" },
+						description: { type: "string", description: "Descrição da categoria" },
+						active: { type: "boolean", description: "Categoria ativa", default: true },
+					},
+				},
+				response: {
+					201: {
+						description: "Categoria criada com sucesso",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					400: {
+						description: "Erro de validação",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+							errors: { type: "object" },
+						},
+					},
+					401: {
+						description: "Não autorizado",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					500: {
+						description: "Erro interno do servidor",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+				},
+			},
+		},
+		createNewCategory
 	);
 }
