@@ -40,6 +40,8 @@ body.slug = slugify(body.name, { lower: true, strict: true, locale: "pt" });
 
 **Filtros Prisma:** Use `where.OR` para busca multi-campo, `mode: "insensitive"` para case-insensitive
 
+**Transações Prisma:** Use `prisma.$transaction(async (tx) => { ... })` para operações atômicas que modificam múltiplas tabelas (ex: criar Order + OrderItems + decrementar stock)
+
 ## Configuração e Desenvolvimento
 
 ### Comandos Essenciais
@@ -57,10 +59,13 @@ npm run prisma:seed      # Popular banco com dados iniciais
 - Aplicar com `fastify.addHook("onRequest", authenticate)` nas rotas protegidas
 
 ### Prisma Schema Atual
-- **User**: Role enum (USER/ADMIN), cpf/phone opcionais, bcrypt password hash
+- **User**: Role enum (USER/ADMIN), cpf/phone opcionais, bcrypt password hash, relação orders[]
 - **Category**: name, slug único, description opcional, soft delete via `active`, relação com Product
-- **Product**: categoryId obrigatório (FK para Category), colors/sizes/images como Json, slug único, soft delete via `active`
-- **Order/OrderItem**: shippingAddress como Json, status default "pending", OrderItem tem size opcional
+- **Product**: categoryId obrigatório (FK para Category), colors/sizes/images como Json, slug único, soft delete via `active`, relação orderItems[]
+- **Order**: userId opcional (guest checkout), total calculado, status enum (PENDING/PAID/SHIPPED/DELIVERED/CANCELLED), shippingAddress Json, paymentMethod string, relações user e items[]
+- **OrderItem**: orderId, productId, price snapshot, quantity, size opcional, relação order e product
+
+**Tipos Json no Prisma:** Use `as Prisma.JsonObject` para campos Json (não `as any`)
 
 ## Integrações Planejadas
 
@@ -101,6 +106,20 @@ npm run prisma:seed      # Popular banco com dados iniciais
 - PUT `/categories/:id` - Atualizar categoria (slug atualizado se name mudar)
 - DELETE `/categories/:id` - Soft delete em cascata (desativa categoria + produtos)
 
+### Pedidos (`/orders`)
+- GET `/orders` - Listar com filtros (page, limit, status, userId, startDate, endDate) com includes (user, items, product, category)
+- GET `/orders/:id` - Obter pedido por ID com todos os relacionamentos
+- POST `/orders` - Criar pedido com validação transacional (verifica estoque, decrementa stock, cria order + orderItems atomicamente)
+- PUT `/orders/:id` - Atualizar status ou shippingAddress (não permite alterar items)
+- DELETE `/orders/:id` - Cancelar pedido (altera status para CANCELLED sem reversão de estoque)
+
+**Validações em createOrder:**
+- Produtos existem e estão ativos
+- Estoque suficiente disponível
+- Size obrigatório se produto tiver sizes disponíveis
+- Cálculo automático de total (snapshot de preços)
+- Transação Prisma garante atomicidade (rollback automático em erro)
+
 ## Problemas Comuns
 
 **"Token inválido ou expirado":** Verificar `JWT_SECRET` no `.env` e presença do header `Authorization: Bearer <token>`
@@ -114,8 +133,8 @@ npm run prisma:seed      # Popular banco com dados iniciais
 ## Próximos Passos (Roadmap)
 1. ✅ Implementar model Category e relacionamento Product.categoryId
 2. ✅ CRUD completo de categorias com soft delete em cascata
-3. Admin endpoints para gerenciamento de usuários
-4. POST /orders com validação de stock (transacional)
+3. ✅ CRUD completo de pedidos (Orders) com validação transacional de estoque
+4. Admin endpoints para gerenciamento de usuários
 5. Upload de imagens para Supabase Storage
 6. Endpoint POST /shipping/calc (viaCEP integration)
 7. Testes com Vitest
