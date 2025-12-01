@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { listOrders, getOrder, createNewOrder, updateExistingOrder } from '../controllers/orders.controller'
+import { listOrders, getOrder, createNewOrder, updateExistingOrder, deleteExistingOrder } from '../controllers/orders.controller'
 import { authenticate } from '../middlewares/auth.middleware'
 
 export default async function orderRoutes(fastify: FastifyInstance) {
@@ -322,5 +322,45 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       },
     },
     updateExistingOrder
+  )
+
+  // DELETE /orders/:id - Cancelar pedido
+  fastify.delete(
+    '/:id',
+    {
+      schema: {
+        tags: ['Orders'],
+        description: 'Cancelar pedido (altera status para CANCELLED sem reversão de estoque)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: {
+            id: { type: 'number', description: 'ID do pedido' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+          400: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+          404: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    deleteExistingOrder
   )
 }

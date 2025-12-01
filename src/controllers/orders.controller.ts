@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { orderFiltersSchema, createOrderSchema, updateOrderSchema } from '../utils/validators'
 import { OrderFilters, CreateOrder, UpdateOrder } from '../types'
-import { getOrders, getOrderById, createOrder, updateOrder } from '../services/orders.service'
+import { getOrders, getOrderById, createOrder, updateOrder, cancelOrder } from '../services/orders.service'
 
 export async function listOrders(request: FastifyRequest, reply: FastifyReply) {
   const filters = orderFiltersSchema.parse(request.query as OrderFilters)
@@ -32,4 +32,15 @@ export async function updateExistingOrder(
   const data = updateOrderSchema.parse(request.body as UpdateOrder)
   const order = await updateOrder(id, data)
   reply.status(200).send(order)
+}
+
+export async function deleteExistingOrder(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply
+) {
+  const id = parseInt(request.params.id, 10)
+  await cancelOrder(id)
+  reply.status(200).send({
+    message: 'Pedido cancelado com sucesso',
+  })
 }

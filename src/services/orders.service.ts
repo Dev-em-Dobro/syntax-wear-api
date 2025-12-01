@@ -235,3 +235,51 @@ export async function updateOrder(id: number, data: UpdateOrder) {
 
   return updatedOrder
 }
+
+export async function cancelOrder(id: number) {
+  // Verificar se pedido existe
+  const existingOrder = await prisma.order.findUnique({
+    where: { id },
+  })
+
+  if (!existingOrder) {
+    throw new Error('Pedido não encontrado')
+  }
+
+  // Verificar se pedido já foi cancelado
+  if (existingOrder.status === 'CANCELLED') {
+    throw new Error('Pedido já está cancelado')
+  }
+
+  // Verificar se pedido já foi entregue
+  if (existingOrder.status === 'DELIVERED') {
+    throw new Error('Não é possível cancelar um pedido já entregue')
+  }
+
+  // Atualizar status para CANCELLED (sem reversão de estoque)
+  const cancelledOrder = await prisma.order.update({
+    where: { id },
+    data: { status: 'CANCELLED' },
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+      items: {
+        include: {
+          product: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return cancelledOrder
+}
