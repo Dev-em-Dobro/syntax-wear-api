@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { listCategories, getCategory, createNewCategory } from "../controllers/categories.controller";
+import { listCategories, getCategory, createNewCategory, updateExistingCategory, deleteExistingCategory } from "../controllers/categories.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function categoryRoutes(fastify: FastifyInstance) {
@@ -185,5 +185,121 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
 			},
 		},
 		createNewCategory
+	);
+
+	fastify.put(
+		"/:id",
+		{
+			schema: {
+				tags: ["Categories"],
+				description: "Atualizar categoria",
+				security: [{ bearerAuth: [] }],
+				params: {
+					type: "object",
+					properties: {
+						id: { type: "string", description: "ID da categoria" },
+					},
+					required: ["id"],
+				},
+				body: {
+					type: "object",
+					properties: {
+						name: { type: "string", description: "Nome da categoria" },
+						description: { type: "string", description: "Descrição da categoria" },
+						active: { type: "boolean", description: "Categoria ativa" },
+					},
+				},
+				response: {
+					200: {
+						description: "Categoria atualizada",
+						type: "object",
+						properties: {
+							id: { type: "number" },
+							name: { type: "string" },
+							slug: { type: "string" },
+							description: { type: "string", nullable: true },
+							active: { type: "boolean" },
+							createdAt: { type: "string", format: "date-time" },
+							updatedAt: { type: "string", format: "date-time" },
+						},
+					},
+					400: {
+						description: "Erro de validação",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					404: {
+						description: "Categoria não encontrada",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					401: {
+						description: "Não autorizado",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					500: {
+						description: "Erro interno do servidor",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+				},
+			},
+		},
+		updateExistingCategory
+	);
+
+	fastify.delete(
+		"/:id",
+		{
+			schema: {
+				tags: ["Categories"],
+				description: "Deletar uma categoria (soft delete em cascata)",
+				security: [{ bearerAuth: [] }],
+				params: {
+					type: "object",
+					properties: {
+						id: { type: "number", description: "ID da categoria" },
+					},
+					required: ["id"],
+				},
+				response: {
+					204: {
+						description: "Categoria deletada com sucesso",
+						type: "null",
+					},
+					404: {
+						description: "Categoria não encontrada",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					401: {
+						description: "Não autorizado",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+					500: {
+						description: "Erro interno do servidor",
+						type: "object",
+						properties: {
+							message: { type: "string" },
+						},
+					},
+				},
+			},
+		},
+		deleteExistingCategory
 	);
 }

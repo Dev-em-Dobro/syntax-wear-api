@@ -22,6 +22,13 @@ export interface CreateCategory {
     active: boolean;
 }
 
+export interface UpdateCategory {
+    name?: string;
+    description?: string;
+    slug?: string;
+    active?: boolean;
+}
+
 export interface AuthRequest {
     email: string;
     password: string;
