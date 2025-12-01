@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { listOrders, getOrder } from '../controllers/orders.controller'
+import { listOrders, getOrder, createNewOrder, updateExistingOrder } from '../controllers/orders.controller'
 import { authenticate } from '../middlewares/auth.middleware'
 
 export default async function orderRoutes(fastify: FastifyInstance) {
@@ -189,5 +189,138 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       },
     },
     getOrder
+  )
+
+  // POST /orders - Criar novo pedido
+  fastify.post(
+    '/',
+    {
+      schema: {
+        tags: ['Orders'],
+        description: 'Criar novo pedido com validação de estoque e cálculo automático de total',
+        security: [{ bearerAuth: [] }],
+        body: {
+          type: 'object',
+          required: ['items', 'shippingAddress', 'paymentMethod'],
+          properties: {
+            userId: { type: 'number', description: 'ID do usuário (opcional para guest checkout)' },
+            items: {
+              type: 'array',
+              minItems: 1,
+              items: {
+                type: 'object',
+                required: ['productId', 'quantity'],
+                properties: {
+                  productId: { type: 'number', description: 'ID do produto' },
+                  quantity: { type: 'number', description: 'Quantidade' },
+                  size: { type: 'string', description: 'Tamanho (obrigatório se produto tiver sizes)' },
+                },
+              },
+            },
+            shippingAddress: {
+              type: 'object',
+              required: ['cep', 'street', 'number', 'neighborhood', 'city', 'state'],
+              properties: {
+                cep: { type: 'string', description: 'CEP com 8 dígitos' },
+                street: { type: 'string', description: 'Rua/Avenida' },
+                number: { type: 'string', description: 'Número' },
+                complement: { type: 'string', description: 'Complemento (opcional)' },
+                neighborhood: { type: 'string', description: 'Bairro' },
+                city: { type: 'string', description: 'Cidade' },
+                state: { type: 'string', description: 'Estado (UF)' },
+                country: { type: 'string', default: 'BR', description: 'País (padrão: BR)' },
+              },
+            },
+            paymentMethod: { type: 'string', description: 'Método de pagamento (ex: credit_card, pix, boleto)' },
+          },
+        },
+        response: {
+          201: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+              orderId: { type: 'number' },
+            },
+          },
+          400: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+          404: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    createNewOrder
+  )
+
+  // PUT /orders/:id - Atualizar pedido
+  fastify.put(
+    '/:id',
+    {
+      schema: {
+        tags: ['Orders'],
+        description: 'Atualizar status ou endereço de entrega do pedido (não permite alterar items)',
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: {
+            id: { type: 'number', description: 'ID do pedido' },
+          },
+        },
+        body: {
+          type: 'object',
+          properties: {
+            status: {
+              type: 'string',
+              enum: ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'],
+              description: 'Novo status do pedido',
+            },
+            shippingAddress: {
+              type: 'object',
+              properties: {
+                cep: { type: 'string' },
+                street: { type: 'string' },
+                number: { type: 'string' },
+                complement: { type: 'string' },
+                neighborhood: { type: 'string' },
+                city: { type: 'string' },
+                state: { type: 'string' },
+                country: { type: 'string', default: 'BR' },
+              },
+            },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              userId: { type: 'number', nullable: true },
+              total: { type: 'number' },
+              status: { type: 'string' },
+              shippingAddress: { type: 'object' },
+              paymentMethod: { type: 'string' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          },
+          404: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    updateExistingOrder
   )
 }
