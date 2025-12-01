@@ -30,7 +30,9 @@ services/     → Lógica de negócio + acesso ao Prisma
 body.slug = slugify(body.name, { lower: true, strict: true, locale: "pt" });
 ```
 
-**Soft deletes:** Use `active: false` em vez de deletar registros (ver `products.service.ts:deleteProduct`)
+**Soft deletes:** Use `active: false` em vez de deletar registros (ver `products.service.ts:deleteProduct` e `categories.service.ts:deleteCategory`)
+
+**Soft delete em cascata:** Ao deletar categoria, desativar todos os produtos relacionados automaticamente (ver `categories.service.ts:deleteCategory`)
 
 **Erros em serviços:** Lance `throw new Error("Mensagem em português")` - error handler global captura
 
@@ -56,9 +58,9 @@ npm run prisma:seed      # Popular banco com dados iniciais
 
 ### Prisma Schema Atual
 - **User**: Role enum (USER/ADMIN), cpf/phone opcionais, bcrypt password hash
-- **Product**: colors/sizes/images como Json, slug único, soft delete via `active`
+- **Category**: name, slug único, description opcional, soft delete via `active`, relação com Product
+- **Product**: categoryId obrigatório (FK para Category), colors/sizes/images como Json, slug único, soft delete via `active`
 - **Order/OrderItem**: shippingAddress como Json, status default "pending", OrderItem tem size opcional
-- **Sem Category atual no schema** (mencionado no PRD mas não implementado ainda)
 
 ## Integrações Planejadas
 
@@ -77,7 +79,27 @@ npm run prisma:seed      # Popular banco com dados iniciais
 ## OpenAPI/Swagger
 - Docs em `http://localhost:3000/api-docs` (Scalar UI)
 - Schemas inline em routes com tags, description, body, response, security
-- Exemplo em `products.routes.ts` e `auth.routes.ts`
+- Exemplo em `products.routes.ts`, `categories.routes.ts` e `auth.routes.ts`
+
+## Endpoints Implementados
+
+### Autenticação (`/auth`)
+- POST `/auth/register` - Criar conta
+- POST `/auth/signin` - Login
+
+### Produtos (`/products`)
+- GET `/products` - Listar com filtros (page, limit, search, categoryId, minPrice, maxPrice, sortBy, sortOrder)
+- GET `/products/:id` - Obter produto por ID (inclui categoria)
+- POST `/products` - Criar produto (requer categoryId)
+- PUT `/products/:id` - Atualizar produto (pode atualizar categoryId)
+- DELETE `/products/:id` - Soft delete
+
+### Categorias (`/categories`)
+- GET `/categories` - Listar com filtros (page, limit, search) - apenas categorias ativas
+- GET `/categories/:id` - Obter categoria por ID
+- POST `/categories` - Criar categoria (slug gerado automaticamente)
+- PUT `/categories/:id` - Atualizar categoria (slug atualizado se name mudar)
+- DELETE `/categories/:id` - Soft delete em cascata (desativa categoria + produtos)
 
 ## Problemas Comuns
 
@@ -90,9 +112,10 @@ npm run prisma:seed      # Popular banco com dados iniciais
 **Decimal vs Number:** Prisma retorna `Decimal` para price/total - converter com `Number()` ou usar métodos do `decimal.js`
 
 ## Próximos Passos (Roadmap)
-1. Implementar model Category e relacionamento Product.categoryId
-2. Admin CRUD para categorias e usuários
-3. POST /orders com validação de stock (transacional)
-4. Upload de imagens para Supabase Storage
-5. Endpoint POST /shipping/calc (viaCEP integration)
-6. Testes com Vitest
+1. ✅ Implementar model Category e relacionamento Product.categoryId
+2. ✅ CRUD completo de categorias com soft delete em cascata
+3. Admin endpoints para gerenciamento de usuários
+4. POST /orders com validação de stock (transacional)
+5. Upload de imagens para Supabase Storage
+6. Endpoint POST /shipping/calc (viaCEP integration)
+7. Testes com Vitest
