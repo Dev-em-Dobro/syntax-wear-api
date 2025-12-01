@@ -4,8 +4,15 @@ export interface ProductFilters{
     minPrice?: number;
     maxPrice?: number;
     search?: string;
+    categoryId?: number;
     sortBy: 'price' | 'name' | 'createdAt';
     sortOrder: 'asc' | 'desc';
+}
+
+export interface CategoryFilters {
+    page?: number;
+    limit?: number;
+    search?: string;
 }
 
 export interface AuthRequest {
@@ -31,6 +38,7 @@ export interface CreateProduct {
     stock: number;
     active: boolean;
     images?: string[];
+    categoryId: number;
 }
 
 export interface UpdateProduct extends Partial<CreateProduct> {

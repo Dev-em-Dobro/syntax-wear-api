@@ -2,9 +2,14 @@ import { prisma } from "../utils/prisma";
 import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
 
 export const getProducts = async (filter: ProductFilters) => {
-	const { minPrice, maxPrice, search, sortBy, sortOrder, page = 1, limit = 10 } = filter;
+	const { minPrice, maxPrice, search, categoryId, sortBy, sortOrder, page = 1, limit = 10 } = filter;
 
 	const where: any = {};
+
+	// Filtro por categoria
+	if (categoryId) {
+		where.categoryId = categoryId;
+	}
 
 	// Filtro por preço
 	if (minPrice !== undefined || maxPrice !== undefined) {
@@ -73,6 +78,9 @@ export const getProducts = async (filter: ProductFilters) => {
 export const getProductById = async (id: number) => {
 	const product = await prisma.product.findUnique({
 		where: { id },
+		include:{
+			category: true,
+		}
 	});
 
 	if (!product) {
@@ -94,7 +102,6 @@ export const createProduct = async (data: CreateProduct) => {
 	const newProduct = await prisma.product.create({ data });
 	return newProduct;
 };
-
 export const updateProduct = async (id: number, data: UpdateProduct) => {
 	const existingProduct = await prisma.product.findUnique({
 		where: { id },
