@@ -18,7 +18,23 @@ import { errorHandler } from "./middlewares/error.middleware";
 const PORT = parseInt(process.env.PORT ?? "3000");
 
 const fastify = Fastify({
-	logger: true,
+	logger: {
+    level: process.env.LOG_LEVEL || 'info',
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+          // ❌ NÃO logar body, headers com Authorization
+        };
+      },
+      res(reply) {
+        return {
+          statusCode: reply.statusCode,
+        };
+      }
+    }
+  }
 });
 
 fastify.register(jwt, {

@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { createNewProduct, getProduct, listProducts, updateExistingProduct, deleteExistingProduct } from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/admin.middleware";
+import { CreateProduct, UpdateProduct } from "../types";
 
 export default async function productRoutes(fastify: FastifyInstance) {
 	fastify.get(
@@ -154,7 +155,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 		getProduct
 	);
 
-	fastify.post(
+	fastify.post<{ Body: CreateProduct }>(
 		"/",
 		{
 			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
@@ -217,7 +218,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 		createNewProduct
 	);
 
-	fastify.put(
+	fastify.put<{ Body: UpdateProduct; Params: { id: string } }>(
 		"/:id",
 		{
 			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
@@ -297,7 +298,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 		updateExistingProduct
 	);
 
-	fastify.delete(
+	fastify.delete<{ Params: { id: string } }>(
 		"/:id",
 		{
 			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
