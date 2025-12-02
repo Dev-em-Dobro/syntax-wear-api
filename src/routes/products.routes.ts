@@ -268,6 +268,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 							color: { type: "string", nullable: true },
 							stock: { type: "integer" },
 							tags: { type: "array", items: { type: "string" } },
+							slug: { type: "string" },
 						},
 					},
 					400: {
