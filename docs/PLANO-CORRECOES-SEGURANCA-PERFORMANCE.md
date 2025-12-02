@@ -2,11 +2,47 @@
 ## API Syntax Wear (Node.js + Fastify + TypeScript + PostgreSQL)
 
 **Data de análise:** 02 de dezembro de 2025  
+**Última atualização:** 02 de dezembro de 2025  
 **Total de issues identificados:** 30  
-**Severidade Crítica:** 5  
-**Severidade Alta:** 6  
-**Severidade Média:** 15  
-**Severidade Baixa:** 4
+**Issues resolvidos:** 6 ✅  
+**Issues pendentes:** 24 ⚠️  
+**Severidade Crítica pendente:** 3 🔴  
+**Severidade Alta pendente:** 6 🟠  
+**Severidade Média pendente:** 14 🟡  
+**Severidade Baixa pendente:** 1 🟢
+
+---
+
+## ✅ MELHORIAS JÁ IMPLEMENTADAS
+
+### 1.1 **CREDENCIAIS EXPOSTAS NO GIT** ✅ **RESOLVIDO**
+- ✅ Arquivo `.env.example` criado sem valores reais
+- ✅ `.gitignore` configurado corretamente incluindo `.env`
+- ⚠️ **PENDENTE:** Verificar histórico git e rotacionar credenciais se necessário
+
+### 1.2 **AUTENTICAÇÃO COMENTADA** ✅ **RESOLVIDO**
+- ✅ Middleware `authenticate` ativo em `orders.routes.ts`
+- ✅ Middleware `requireAdmin` implementado e aplicado em:
+  - `products.routes.ts`: POST, PUT, DELETE
+  - `categories.routes.ts`: POST, PUT, DELETE
+
+### 1.3 **SENHAS RETORNADAS NA RESPOSTA** ✅ **RESOLVIDO**
+- ✅ `auth.service.ts` removendo campo `password` via:
+  - `select` específico em `registerUser` (não inclui password)
+  - Destructuring em `loginUser` (`const { password, ...userWithoutPassword } = user`)
+
+### 3.3 **LOGS COM INFORMAÇÕES SENSÍVEIS** ✅ **PARCIALMENTE RESOLVIDO**
+- ✅ Logger configurado com serializers para ocultar body e headers
+- ✅ Não loga Authorization headers
+
+### 5.6 **VARIÁVEIS DE AMBIENTE SEM VALIDAÇÃO** ✅ **PARCIALMENTE RESOLVIDO**
+- ✅ Arquivo `.env.example` criado com documentação
+- ⚠️ **PENDENTE:** Validação Zod das variáveis de ambiente
+
+### Melhorias Bonus Implementadas
+- ✅ Endpoint `/health` para healthchecks
+- ✅ Validação Zod robusta em todos os schemas
+- ✅ Soft delete em cascata implementado
 
 ---
 
