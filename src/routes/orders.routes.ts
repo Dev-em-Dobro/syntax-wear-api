@@ -4,7 +4,7 @@ import { authenticate } from '../middlewares/auth.middleware'
 
 export default async function orderRoutes(fastify: FastifyInstance) {
   // Aplicar autenticação em todas as rotas de pedidos
-  //fastify.addHook('onRequest', authenticate)
+  fastify.addHook('onRequest', authenticate)
 
   // GET /orders - Listar pedidos com filtros
   fastify.get(

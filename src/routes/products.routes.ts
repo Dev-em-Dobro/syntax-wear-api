@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { createNewProduct, getProduct, listProducts, updateExistingProduct, deleteExistingProduct } from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middleware";
+import { requireAdmin } from "../middlewares/admin.middleware";
 
 export default async function productRoutes(fastify: FastifyInstance) {
-	//fastify.addHook("onRequest", authenticate);
 	fastify.get(
 		"/",
 		{
@@ -157,6 +157,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 	fastify.post(
 		"/",
 		{
+			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
 			schema: {
 				tags: ["Products"],
 				description: "Criar um novo produto",
@@ -219,6 +220,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 	fastify.put(
 		"/:id",
 		{
+			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
 			schema: {
 				tags: ["Products"],
 				description: "Atualizar produto",
@@ -298,6 +300,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
 	fastify.delete(
 		"/:id",
 		{
+			onRequest: [requireAdmin], // Requer autenticação + role ADMIN
 			schema: {
 				tags: ["Products"],
 				description: "Deletar um produto",

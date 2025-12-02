@@ -10,8 +10,8 @@ export const listCategories = async (request: FastifyRequest<{ Querystring: Cate
 	reply.status(200).send(result);
 };
 
-export const getCategory = async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
-	const category = await getCategoryById(request.params.id);
+export const getCategory = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+	const category = await getCategoryById(Number(request.params.id));
 	reply.status(200).send(category);
 };
 
@@ -48,8 +48,8 @@ export const updateExistingCategory = async (request: FastifyRequest<{ Params: {
 	reply.status(200).send(category);
 };
 
-export const deleteExistingCategory = async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
+export const deleteExistingCategory = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
 	const { id } = request.params;
-	await deleteCategory(id);
+	await deleteCategory(Number(id));
 	reply.status(204).send();
 };
