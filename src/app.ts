@@ -111,3 +111,6 @@ export async function buildApp(): Promise<FastifyInstance> {
 
 	return fastify;
 }
+
+// Default export para compatibilidade com deploy serverless
+export default buildApp;
