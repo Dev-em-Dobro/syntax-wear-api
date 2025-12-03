@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsup src --out-dir dist --format esm",
+    "build": "tsup src --out-dir build",
     "start": "node dist/server.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
