@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
-    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -14,7 +13,10 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "typeRoots": [
+        "./node_modules/@types"
+    ]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests", "**/*.test.ts" ,"vitest.config.ts"]
