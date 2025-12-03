@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
-import { listOrders, getOrder, createNewOrder, updateExistingOrder, deleteExistingOrder } from '../controllers/orders.controller.js'
-import { authenticate } from '../middlewares/auth.middleware.js'
+import { listOrders, getOrder, createNewOrder, updateExistingOrder, deleteExistingOrder } from '../controllers/orders.controller'
+import { authenticate } from '../middlewares/auth.middleware'
 
 export default async function orderRoutes(fastify: FastifyInstance) {
   // Aplicar autenticação em todas as rotas de pedidos

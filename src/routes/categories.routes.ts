@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { listCategories, getCategory, createNewCategory, updateExistingCategory, deleteExistingCategory } from "../controllers/categories.controller.js";
-import { authenticate } from "../middlewares/auth.middleware.js";
-import { requireAdmin } from "../middlewares/admin.middleware.js";
-import type { CreateCategory, UpdateCategory, CategoryFilters } from "../types/index.js";
+import { listCategories, getCategory, createNewCategory, updateExistingCategory, deleteExistingCategory } from "../controllers/categories.controller";
+import { authenticate } from "../middlewares/auth.middleware";
+import { requireAdmin } from "../middlewares/admin.middleware";
+import type { CreateCategory, UpdateCategory, CategoryFilters } from "../types";
 
 export default async function categoryRoutes(fastify: FastifyInstance) {
 

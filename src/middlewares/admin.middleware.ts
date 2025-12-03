@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { prisma } from "../utils/prisma.js";
+import { prisma } from "../utils/prisma";
 
 export const requireAdmin = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
 	try {

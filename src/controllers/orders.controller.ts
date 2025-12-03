@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { orderFiltersSchema, createOrderSchema, updateOrderSchema } from '../utils/validators.js'
-import { OrderFilters, CreateOrder, UpdateOrder } from '../types/index.js'
-import { getOrders, getOrderById, createOrder, updateOrder, cancelOrder } from '../services/orders.service.js'
+import { orderFiltersSchema, createOrderSchema, updateOrderSchema } from '../utils/validators'
+import { OrderFilters, CreateOrder, UpdateOrder } from '../types'
+import { getOrders, getOrderById, createOrder, updateOrder, cancelOrder } from '../services/orders.service'
 
 export async function listOrders(request: FastifyRequest, reply: FastifyReply) {
   const filters = orderFiltersSchema.parse(request.query as OrderFilters)
