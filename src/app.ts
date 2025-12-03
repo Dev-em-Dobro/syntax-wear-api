@@ -5,14 +5,14 @@ import Fastify, { FastifyInstance } from "fastify";
 import "dotenv/config";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
-import productRoutes from "./routes/products.routes";
-import categoryRoutes from "./routes/categories.routes";
-import orderRoutes from "./routes/orders.routes";
+import productRoutes from "./routes/products.routes.js";
+import categoryRoutes from "./routes/categories.routes.js";
+import orderRoutes from "./routes/orders.routes.js";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import jwt from "@fastify/jwt";
-import authRoutes from "./routes/auth.routes";
-import { errorHandler } from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.routes.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 

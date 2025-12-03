@@ -6,5 +6,5 @@ import slugify from "slugify";
  * @returns Slug formatado (lowercase, sem caracteres especiais)
  */
 export function generateSlug(text: string): string {
-  return slugify(text, { lower: true, strict: true, locale: "pt" });
+  return (slugify as unknown as typeof slugify.default)(text, { lower: true, strict: true, locale: "pt" });
 }

@@ -1,5 +1,5 @@
-import { OrderFilters, CreateOrder, UpdateOrder } from '../types'
-import { prisma } from '../utils/prisma'
+import { OrderFilters, CreateOrder, UpdateOrder } from '../types/index.js'
+import { prisma } from '../utils/prisma.js'
 
 export async function getOrders(filters: OrderFilters = {}, requestingUserId: number, isAdmin: boolean) {
   const page = filters.page || 1
