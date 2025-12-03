@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && npx prisma generate",
+    "build": "tsup src --out-dir dist --format esm",
     "start": "node dist/server.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -51,6 +51,7 @@
     "@vitest/ui": "^4.0.15",
     "prisma": "^5.7.1",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
