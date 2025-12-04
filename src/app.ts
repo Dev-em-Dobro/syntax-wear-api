@@ -1,6 +1,6 @@
 // Require the framework and instantiate it
 
-// ESM
+// ESM s
 import Fastify, { FastifyInstance } from "fastify";
 import "dotenv/config";
 import cors from "@fastify/cors";
