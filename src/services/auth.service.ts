@@ -1,3 +1,4 @@
+import { FastifyReply } from "fastify";
 import { AuthRequest, RegisterRequest } from "../types";
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
@@ -41,19 +42,21 @@ export const registerUser = async (payload: RegisterRequest) => {
     return newUser;
 };
 
-export const loginUser = async (data: AuthRequest) => {
+export const loginUser = async (data: AuthRequest, reply: FastifyReply) => {
     const user = await prisma.user.findUnique({
         where: { email: data.email },
     });
 
     if(!user) {
-        throw new Error("Usuário não encontrado.");
+        reply.status(409).send({ message: "As credencias estão incorretas." })
+		return;
     }
 
     const isValidPassword = await bcrypt.compare(data.password, user.password);
 
     if(!isValidPassword) {
-        throw new Error("Senha inválida.");
+        reply.status(409).send({ message: "As credencias estão incorretas." })
+		return;
     }
 
     // Remover password antes de retornar
