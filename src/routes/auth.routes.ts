@@ -50,7 +50,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
 		preHandler: [authenticate], // Protege a rota com o middleware de autenticação
 		schema: {
 			tags: ["Auth"],
-			description: "Retorna o perfil do usuário autenticado",
+			description: " Retorna o perfil do usuário autenticado",
 			security: [{ bearerAuth: [] }], // Indica que a rota requer autenticação
 		}, 
 	}, profile);
